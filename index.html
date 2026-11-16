@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Point Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <aside id="sidebar">
+    <div class="side-logo">🍃</div>
+    <button class="side-btn active" data-tab="home"><span class="s-ico">🏝️</span><span class="s-label">Home</span></button>
+    <button class="side-btn" data-tab="days"><span class="s-ico">📅</span><span class="s-label">Days</span></button>
+    <button class="side-btn" data-tab="goals"><span class="s-ico">🏆</span><span class="s-label">Goals</span></button>
+    <button id="btn-skin" class="side-btn"><span class="s-ico">🌙</span><span class="s-label">Skin</span></button>
+    <button id="btn-help" class="side-btn"><span class="s-ico">❓</span><span class="s-label">Help</span></button>
+    <div class="side-tools">
+      <button id="btn-export" class="side-tool"><span class="s-ico">💾</span><span>Export</span></button>
+      <button id="btn-import" class="side-tool"><span class="s-ico">📂</span><span>Import</span></button>
+    </div>
+    <input id="file-import" type="file" accept=".json,application/json" hidden>
+  </aside>
+
+  <main id="main">
+    <section id="screen-home" class="screen active">
+      <div class="home-grid">
+        <div class="col col-left">
+          <div class="bubble-wrap">
+            <div id="canvas-holder">
+              <div class="goal-top-row">
+                <div id="streak-badge" class="corner-badge">🔥 0d</div>
+                <button id="btn-goal-menu" class="corner-btn" aria-label="Goal options">⋯</button>
+                <div id="today-ring" class="ring" style="--p:0">
+                  <div class="ring-inner">
+                    <span id="ring-label">0/30</span>
+                    <span class="ring-today">today</span>
+                  </div>
+                </div>
+              </div>
+              <button id="collect-btn" hidden>🎉 Collect!</button>
+              <button id="sound-btn" aria-label="Toggle sound">🔊</button>
+              <div id="goal-form" class="goal-form" hidden>
+                <div class="gf-head">
+                  <h3 id="gf-title">New goal 🌱</h3>
+                  <button id="gf-close" class="gf-x" aria-label="Close">✕</button>
+                </div>
+                <div id="gf-icons" class="gf-icons"></div>
+                <input id="gf-name" class="cat-input" type="text" maxlength="30" placeholder="Goal name" autocomplete="off">
+                <div class="gf-mode">
+                  <button id="gf-mode-usd" class="mode-btn active">$ USD ($1 = 10P)</button>
+                  <button id="gf-mode-pt" class="mode-btn">P Points</button>
+                </div>
+                <div class="gf-price-row">
+                  <input id="gf-price" class="cat-input" type="text" inputmode="decimal" placeholder="e.g. 45.99">
+                  <span id="gf-calc" class="gf-calc">= ?P</span>
+                </div>
+                <button id="gf-save" class="gf-save">Set goal! 🌟</button>
+              </div>
+              <div id="no-goal" class="no-goal" hidden>
+                <p>✨ No goal right now!</p>
+                <button id="btn-new-goal" class="gf-save">＋ Set a new goal</button>
+              </div>
+            </div>
+            <div class="bubble-tail"></div>
+            <div class="name-tag">GOAL</div>
+          </div>
+          <div class="panel col-panel">
+            <h2 class="panel-title">📜 Recent</h2>
+            <div class="scroll">
+              <div id="recent-list"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col col-center">
+          <div class="panel col-panel">
+            <h2 class="panel-title">🧠 Brain Dump</h2>
+            <div id="bd-count" class="bd-count">All clear! Nothing in your head 🌤️</div>
+            <input id="bd-input" class="cat-input" type="text" maxlength="60" placeholder="What's on your mind?" autocomplete="off">
+            <div id="bd-chips" class="bd-chips"></div>
+            <div id="now-dock" class="now-dock">
+              <div class="now-slot" data-slot="0"><span class="now-hint">Drop here</span></div>
+              <div class="now-slot" data-slot="1"><span class="now-hint">Drop here</span></div>
+              <div class="now-slot" data-slot="2"><span class="now-hint">Drop here</span></div>
+            </div>
+            <div id="brain-body" class="brain-body"></div>
+          </div>
+        </div>
+        <div class="col col-right">
+          <div class="panel col-panel">
+            <h2 class="panel-title">⚡ Just Did It</h2>
+            <p class="panel-sub">log something you already did</p>
+            <div class="scroll">
+              <div id="cards" class="cards"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-days" class="screen">
+      <div class="panel col-panel">
+        <h2 class="panel-title">📅 Days</h2>
+        <div id="cal-wrap"></div>
+        <div class="scroll">
+          <div id="days-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-goals" class="screen">
+      <div class="panel col-panel">
+        <h2 class="panel-title">🏆 Goals</h2>
+        <div class="scroll">
+          <div id="goal-current" class="panel"></div>
+          <h3 class="section-title">🏛️ Collected</h3>
+          <div id="collected-list"></div>
+          <h3 id="gaveup-title" class="section-title" hidden>🍂 Gave up</h3>
+          <div id="gaveup-list" hidden></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="menu-backdrop" class="backdrop"></div>
+<div id="goal-menu" class="menu-sheet">
+  <div class="sheet-handle"></div>
+  <div id="menu-title" class="menu-title"></div>
+  <button id="menu-change" class="menu-btn">🔄 Change goal</button>
+  <button id="menu-giveup" class="menu-btn danger">🍂 Give up</button>
+  <button id="menu-cancel" class="menu-cancel">Cancel</button>
+</div>
+
+<div id="dialog-backdrop" class="backdrop"></div>
+<div id="dialog" class="dialog" hidden>
+  <p id="dialog-msg"></p>
+  <div class="dialog-btns">
+    <button id="dialog-yes">Yes, give up 🍂</button>
+    <button id="dialog-no">No, keep going!</button>
+  </div>
+</div>
+
+<div id="focus-backdrop" class="backdrop"></div>
+<div id="focus-dialog" class="dialog" hidden>
+  <p class="dialog-msg">⏱️ How many minutes?</p>
+  <input id="focus-mins" class="cat-input" type="text" inputmode="numeric" maxlength="4" placeholder="e.g. 25">
+  <p id="focus-calc" class="gf-calc dialog-calc">= ?P</p>
+  <div class="dialog-btns">
+    <button id="focus-cancel" class="dlg-plain">Not yet</button>
+    <button id="focus-ok" class="dlg-mint">Done! ⏱️</button>
+  </div>
+</div>
+
+<div id="edit-backdrop" class="backdrop"></div>
+<div id="edit-dialog" class="dialog" hidden>
+  <p class="dialog-msg">Edit bubble ✎</p>
+  <input id="edit-text" class="cat-input" type="text" maxlength="60" placeholder="Task" autocomplete="off">
+  <div id="edit-chips" class="bd-chips"></div>
+  <div class="dialog-btns">
+    <button id="edit-cancel" class="dlg-plain">Cancel</button>
+    <button id="edit-save" class="dlg-mint">Save 💾</button>
+  </div>
+</div>
+
+<div id="import-backdrop" class="backdrop"></div>
+<div id="import-dialog" class="dialog" hidden>
+  <p class="dialog-msg">📂 Replace current data with this backup?</p>
+  <div class="dialog-btns">
+    <button id="import-cancel" class="dlg-plain">Cancel</button>
+    <button id="import-ok" class="dlg-mint">Yes, import</button>
+  </div>
+</div>
+
+<div id="skin-backdrop" class="backdrop"></div>
+<div id="skin-pop" class="skin-pop" hidden>
+  <button class="menu-btn skin-opt" data-skin="day"></button>
+  <button class="menu-btn skin-opt" data-skin="night"></button>
+  <button class="menu-btn skin-opt" data-skin="aqua"></button>
+</div>
+
+<div id="toast" role="status">
+  <span id="toast-msg"></span>
+  <button id="toast-undo">UNDO</button>
+</div>
+
+<div id="tut-backdrop"></div>
+<div id="tut-spot"></div>
+<div id="tut-box" role="dialog" aria-label="Tutorial">
+  <div class="tut-mascot">
+    <svg viewBox="-38 -30 76 54" aria-hidden="true">
+      <circle cx="-27" cy="-20" r="6.5" fill="#FFC4CC" stroke="#B77B82" stroke-width="2.5"/>
+      <circle cx="27" cy="-20" r="6.5" fill="#FFC4CC" stroke="#B77B82" stroke-width="2.5"/>
+      <ellipse cx="0" cy="0" rx="23" ry="20" fill="#FFC4CC" stroke="#B77B82" stroke-width="2.5"/>
+      <circle cx="-9" cy="-5" r="2.6" fill="#7A5A44"/>
+      <circle cx="9" cy="-5" r="2.6" fill="#7A5A44"/>
+      <path d="M -6 3.5 Q 0 9.5 6 3.5" fill="none" stroke="#7A5A44" stroke-width="2.4" stroke-linecap="round"/>
+      <circle cx="-16" cy="4" r="4" fill="rgba(242,156,143,0.45)"/>
+      <circle cx="16" cy="4" r="4" fill="rgba(242,156,143,0.45)"/>
+    </svg>
+    <div class="tut-tag">Dopi</div>
+  </div>
+  <div class="tut-body">
+    <div id="tut-text"></div>
+    <div class="tut-foot">
+      <div id="tut-dots"></div>
+      <div class="tut-actions">
+        <button id="tut-skip" type="button">Skip</button>
+        <button id="tut-next" type="button">Next ▶</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/p5@1/lib/p5.min.js"></script>
+<script src="sketch.js"></script>
+</body>
+</html>
