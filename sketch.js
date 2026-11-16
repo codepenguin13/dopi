@@ -3,21 +3,33 @@
 const LS_KEY = 'pointGame.v1';
 
 const CATEGORIES = [
-  { id: 'small', emoji: '🧽', name: 'Small Chore', hint: 'tidy a little', pts: 1, group: 'CHORE', fill: '#8FD3AC', tint: '#E9F6EE', tintNight: '#D4F2DE', text: '#FFFFFF' },
-  { id: 'big', emoji: '🧹', name: 'Big Chore', hint: 'deep clean (bathroom!)', pts: 3, group: 'CHORE', fill: '#4E9B6F', tint: '#DDF0E5', tintNight: '#B5E3C8', text: '#FFFFFF' },
-  { id: 'light', emoji: '📄', name: 'Light Task', hint: 'tiny steps, one email', pts: 5, group: 'TASK', fill: '#F5D570', tint: '#FBF0D3', tintNight: '#FFEDB3', text: '#8A6D1F' },
-  { id: 'heavy', emoji: '📚', name: 'Heavy Task', hint: 'the big scary thing', pts: 30, group: 'TASK', fill: '#F0A05A', tint: '#FCEBDA', tintNight: '#FFD3AE', text: '#FFFFFF' },
-  { id: 'focus', emoji: '⏱️', name: 'Focus', hint: '1P per 5 minutes', pts: 0, per5: 1, group: 'FOCUS', fill: '#B4A0F0', tint: '#EEE9FB', tintNight: '#E1D6FA', text: '#FFFFFF' }
+  { id: 'small', emoji: '🧽', name: 'Small Chore', hint: 'tidy a little', pts: 1, group: 'CHORE', fill: '#8FD3AC', tint: '#E9F6EE', tintNight: '#D4F2DE', tintAqua: '#EAF6FF', text: '#FFFFFF', textAqua: '#0B3B6E', sz: 0.8 },
+  { id: 'big', emoji: '🧹', name: 'Big Chore', hint: 'deep clean (bathroom!)', pts: 3, group: 'CHORE', fill: '#4E9B6F', tint: '#DDF0E5', tintNight: '#B5E3C8', tintAqua: '#CDE9FF', text: '#FFFFFF', textAqua: '#0B3B6E', sz: 0.9 },
+  { id: 'light', emoji: '📄', name: 'Light Task', hint: 'tiny steps, one email', pts: 5, group: 'TASK', fill: '#F5D570', tint: '#FBF0D3', tintNight: '#FFEDB3', tintAqua: '#9CCBFF', text: '#8A6D1F', textAqua: '#0B3B6E', sz: 1.05 },
+  { id: 'heavy', emoji: '📚', name: 'Heavy Task', hint: 'the big scary thing', pts: 30, group: 'TASK', fill: '#F0A05A', tint: '#FCEBDA', tintNight: '#FFD3AE', tintAqua: '#4F8FEA', text: '#FFFFFF', textAqua: '#FFFFFF', sz: 1.3 },
+  { id: 'focus', emoji: '⏱️', name: 'Focus', hint: '1P per 5 minutes', pts: 0, per5: 1, group: 'FOCUS', fill: '#B4A0F0', tint: '#EEE9FB', tintNight: '#E1D6FA', tintAqua: '#C9D6FF', text: '#FFFFFF', textAqua: '#0B3B6E', sz: 1 }
 ];
 
 function catTint(cat) {
+  if (state.skin === 'aqua') return cat.tintAqua;
   return state.skin !== 'day' ? cat.tintNight : cat.tint;
 }
 
 const DAILY_GOAL = 30;
 const COMBO_WINDOW_MS = 10 * 60 * 1000;
 const NY_TZ = 'America/New_York';
-const GOAL_ICONS = ['👗', '👑', '🎮', '🧸', '🍰', '☕', '✈️', '💎', '🎧', '📚'];
+const GOAL_ICONS = ['👗', '🎮', '🧸', '🍰', '☕', '✈️', '💎', '📚'];
+const ICON_PICKER = [
+  { em: '❤️', icons: ['❤️', '🩷', '🧡', '💛', '💚', '🩵', '💙', '💜', '🤍', '💖', '💝', '✨'] },
+  { em: '😊', icons: ['😊', '😍', '🥰', '😎', '🥳', '🤩', '😴', '🤗', '😇', '🫶', '💪', '🙌'] },
+  { em: '🐶', icons: ['🐶', '🐱', '🐰', '🐻', '🐼', '🐧', '🐥', '🦊', '🐸', '🐳', '🦄', '🐹'] },
+  { em: '🍰', icons: ['🍰', '🍜', '🍣', '🍕', '🧋', '🍩', '🍓', '🍫', '🍦', '🥐', '🍔', '🍪'] },
+  { em: '👗', icons: ['👗', '👟', '👜', '🧥', '👒', '💍', '🕶️', '💄', '👠', '🎀', '🧣', '👑'] },
+  { em: '🎮', icons: ['🎮', '🎨', '🎸', '🎬', '📚', '🧩', '🎟️', '🎤', '🎲', '🏀', '🎳', '🎧'] },
+  { em: '✈️', icons: ['✈️', '🏖️', '🗼', '🚆', '🏕️', '🎡', '🗺️', '🧳', '🚗', '🚲', '🏝️', '🌋'] },
+  { em: '🌷', icons: ['🌷', '🌸', '🌻', '🌈', '🌙', '⭐', '🍀', '🌊', '❄️', '🔥', '🌵', '🍁'] },
+  { em: '💻', icons: ['💻', '📱', '⌚', '📷', '🖥️', '⌨️', '🔋', '🖊️', '💡', '🎮', '🕹️', '📦'] }
+];
 const TIERS = [
   { min: 1, cls: 't1' },
   { min: 10, cls: 't2', em: '🌱' },
@@ -433,6 +445,12 @@ function setup() {
   strokeCap(ROUND);
   makePalette();
   makeDots();
+  c.canvas.addEventListener('mousemove', ev => {
+    c.canvas.style.cursor = mascotHit(ev) ? 'pointer' : 'default';
+  });
+  c.canvas.addEventListener('click', ev => {
+    if (mascotHit(ev)) boopDopi();
+  });
   if (document.fonts && document.fonts.load) {
     Promise.all([
       document.fonts.load('900 100px Nunito'),
@@ -496,17 +514,7 @@ function draw() {
 
   drawComboBadge(topPad - comboBand / 2);
 
-  if (!state.goal) {
-    fill(PAL.sub);
-    textSize(16);
-    textStyle(BOLD);
-    text('✨ Your piggy bank', cx, height * 0.30);
-    textStyle(NORMAL);
-    drawBigNumber(`${fmt(total)}P`, cx, height * 0.48, Math.min(width * 0.2, 90));
-    fill(PAL.sub);
-    textSize(15);
-    text('saved so far!', cx, height * 0.62);
-  } else {
+  if (state.goal) {
     const g = state.goal;
     const remain = Math.max(g.pts - total, 0);
     const ratio = Math.min(Math.max(total / g.pts, 0), 1);
@@ -631,21 +639,6 @@ function draw() {
   if (goalFormEl.hidden) drawMascot(collectVisible);
 
   pulse = pulse > 0.01 ? pulse * 0.9 : 0;
-}
-
-function drawBigNumber(str, x, y, size) {
-  const ctx = drawingContext;
-  ctx.save();
-  ctx.font = `900 ${size}px Nunito, "Apple SD Gothic Neo", sans-serif`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.lineJoin = 'round';
-  ctx.lineWidth = Math.max(6, size * 0.16);
-  ctx.strokeStyle = PAL.numOutline;
-  ctx.strokeText(str, x, y);
-  ctx.fillStyle = PAL.numFill;
-  ctx.fillText(str, x, y);
-  ctx.restore();
 }
 
 function drawText900(str, x, baselineY, size, outlineW) {
@@ -866,6 +859,41 @@ function drawMascot(collectVisible) {
   noStroke();
 }
 
+function mascotPos() {
+  const collectVisible = !!state.goal && !collectBtn.hidden;
+  const baseY = collectVisible ? height - 98 : height - 42;
+  return { x: 46, y: baseY + mY + Math.sin(frameCount * 0.06) * 2 };
+}
+
+function mascotHit(ev) {
+  if (!goalFormEl.hidden) return false;
+  const p = mascotPos();
+  const r = drawingContext.canvas.getBoundingClientRect();
+  return Math.hypot(ev.clientX - (r.left + p.x), ev.clientY - (r.top + p.y)) <= 30;
+}
+
+function boopDopi() {
+  mVel = -5;
+  mHappy = 1;
+  playSound('boop');
+  const p = mascotPos();
+  for (let i = 0; i < 4; i++) {
+    motes.push({
+      ch: '💗',
+      x: p.x + random(-18, 18),
+      y: p.y + random(-16, 8),
+      vy: random(-3.2, -2),
+      vx: random(-0.8, 0.8),
+      rot: random(-0.4, 0.4),
+      vr: random(-0.03, 0.03),
+      sway: random(0.04, 0.1),
+      ph: random(TWO_PI),
+      size: random(12, 16),
+      life: 1
+    });
+  }
+}
+
 let audioCtx = null;
 
 function playSound(kind) {
@@ -874,7 +902,9 @@ function playSound(kind) {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
     const t0 = audioCtx.currentTime;
-    const notes = kind === 'goal' ? [523.25, 659.25, 783.99, 1046.5] : [987.77, 1318.51];
+    const notes = kind === 'goal' ? [523.25, 659.25, 783.99, 1046.5] : kind === 'boop' ? [587.33] : [987.77, 1318.51];
+    const vol = kind === 'boop' ? 0.07 : 0.12;
+    const dec = kind === 'boop' ? 0.1 : 0.18;
     notes.forEach((f, i) => {
       const t = t0 + i * 0.09;
       const o = audioCtx.createOscillator();
@@ -882,12 +912,12 @@ function playSound(kind) {
       o.type = 'triangle';
       o.frequency.value = f;
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.12, t + 0.012);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+      g.gain.exponentialRampToValueAtTime(vol, t + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dec);
       o.connect(g);
       g.connect(audioCtx.destination);
       o.start(t);
-      o.stop(t + 0.2);
+      o.stop(t + dec + 0.02);
     });
   } catch (e) {}
 }
@@ -941,6 +971,8 @@ function renderCards() {
     card.style.setProperty('--fill', cat.fill);
     card.style.setProperty('--tint', catTint(cat));
     card.style.setProperty('--t', cat.text);
+    card.style.setProperty('--btone', catTint(cat));
+    card.style.setProperty('--btext', cat.textAqua);
 
     const head = document.createElement('div');
     head.className = 'cat-head';
@@ -1001,6 +1033,7 @@ function renderCards() {
       });
     }
     input.addEventListener('keydown', ev => {
+      if (ev.isComposing || ev.keyCode === 229) return;
       if (ev.key === 'Enter') submitCard(cat, input);
     });
     go.addEventListener('click', () => submitCard(cat, input));
@@ -1628,7 +1661,96 @@ const gfClose = document.getElementById('gf-close');
 const gfModeUsd = document.getElementById('gf-mode-usd');
 const gfModePt = document.getElementById('gf-mode-pt');
 
+let iconPickerOpen = false;
+let iconPickerCat = 0;
+
+function closeIconPicker() {
+  iconPickerOpen = false;
+  const p = document.getElementById('gf-icon-picker');
+  if (p) p.remove();
+}
+
+function makePickerTile(ic) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'gfip-emoji';
+  b.textContent = ic;
+  b.addEventListener('click', ev => {
+    ev.stopPropagation();
+    selIcon = ic;
+    closeIconPicker();
+    renderGfIcons();
+  });
+  return b;
+}
+
+function buildIconPicker() {
+  closeIconPicker();
+  iconPickerOpen = true;
+  iconPickerCat = 0;
+  goalFormEl.scrollTop = 0;
+  const p = document.createElement('div');
+  p.id = 'gf-icon-picker';
+  p.className = 'gf-icon-picker';
+  const head = document.createElement('div');
+  head.className = 'gfip-head';
+  const title = document.createElement('span');
+  title.className = 'gfip-title';
+  title.textContent = 'Pick an emoji';
+  const x = document.createElement('button');
+  x.type = 'button';
+  x.className = 'gfip-x';
+  x.textContent = '✕';
+  x.setAttribute('aria-label', 'Close');
+  x.addEventListener('click', ev => {
+    ev.stopPropagation();
+    closeIconPicker();
+  });
+  head.appendChild(title);
+  head.appendChild(x);
+  const tabs = document.createElement('div');
+  tabs.className = 'gfip-tabs';
+  const grid = document.createElement('div');
+  grid.className = 'gfip-grid';
+  const fillGrid = () => {
+    grid.innerHTML = '';
+    const rnd = document.createElement('button');
+    rnd.type = 'button';
+    rnd.className = 'gfip-emoji';
+    rnd.textContent = '🎲';
+    rnd.title = 'Random';
+    rnd.addEventListener('click', ev => {
+      ev.stopPropagation();
+      const all = ICON_PICKER.flatMap(c => c.icons);
+      selIcon = all[Math.floor(Math.random() * all.length)];
+      closeIconPicker();
+      renderGfIcons();
+    });
+    grid.appendChild(rnd);
+    ICON_PICKER[iconPickerCat].icons.forEach(ic => grid.appendChild(makePickerTile(ic)));
+  };
+  ICON_PICKER.forEach((cat, ci) => {
+    const t = document.createElement('button');
+    t.type = 'button';
+    t.className = 'gfip-tab' + (ci === iconPickerCat ? ' sel' : '');
+    t.textContent = cat.em;
+    t.addEventListener('click', ev => {
+      ev.stopPropagation();
+      iconPickerCat = ci;
+      p.querySelectorAll('.gfip-tab').forEach((b, i) => b.classList.toggle('sel', i === ci));
+      fillGrid();
+    });
+    tabs.appendChild(t);
+  });
+  fillGrid();
+  p.appendChild(head);
+  p.appendChild(tabs);
+  p.appendChild(grid);
+  return p;
+}
+
 function renderGfIcons() {
+  closeIconPicker();
   gfIcons.innerHTML = '';
   GOAL_ICONS.forEach(ic => {
     const b = document.createElement('button');
@@ -1640,7 +1762,28 @@ function renderGfIcons() {
     });
     gfIcons.appendChild(b);
   });
+  if (selIcon && !GOAL_ICONS.includes(selIcon)) {
+    const cb = document.createElement('button');
+    cb.className = 'gf-ic sel';
+    cb.textContent = selIcon;
+    gfIcons.appendChild(cb);
+  }
+  const plus = document.createElement('button');
+  plus.className = 'gf-ic';
+  plus.textContent = '＋';
+  plus.addEventListener('click', ev => {
+    ev.stopPropagation();
+    if (iconPickerOpen) closeIconPicker();
+    else gfIcons.after(buildIconPicker());
+  });
+  gfIcons.appendChild(plus);
 }
+
+document.addEventListener('click', ev => {
+  if (!iconPickerOpen) return;
+  if (ev.target && ev.target.closest && ev.target.closest('#gf-icon-picker')) return;
+  closeIconPicker();
+});
 
 function setModeButtons() {
   gfModeUsd.classList.toggle('active', usdMode);
@@ -1690,8 +1833,8 @@ gfPrice.addEventListener('input', () => {
   if (v !== gfPrice.value) gfPrice.value = v;
   updateGfCalc();
 });
-gfName.addEventListener('keydown', ev => { if (ev.key === 'Enter') gfPrice.focus(); });
-gfPrice.addEventListener('keydown', ev => { if (ev.key === 'Enter') saveGoalForm(); });
+gfName.addEventListener('keydown', ev => { if (ev.isComposing || ev.keyCode === 229) return; if (ev.key === 'Enter') gfPrice.focus(); });
+gfPrice.addEventListener('keydown', ev => { if (ev.isComposing || ev.keyCode === 229) return; if (ev.key === 'Enter') saveGoalForm(); });
 gfSave.addEventListener('click', saveGoalForm);
 
 function saveGoalForm() {
@@ -1840,13 +1983,15 @@ function deleteEntryWithUndo(id) {
   const e = state.history[i];
   state.history.splice(i, 1);
   saveState();
+  let bub = null;
+  if (e.src === 'brain' && e.bubbleText) bub = addBubble(e.bubbleText, e.bubbleCat || 'light');
   renderAll();
   const delta = e.type === 'earn' ? -e.points : e.points;
   const sign = delta < 0 ? '−' : '+';
   showToastWithUndo(`Removed · ${sign}${fmt(Math.abs(delta))}P`, () => {
     state.history.splice(Math.min(i, state.history.length), 0, e);
     saveState();
-    if (e.src === 'brain' && e.bubbleText) addBubble(e.bubbleText, e.bubbleCat || 'light');
+    if (bub) removeBubble(bub, false);
     renderAll();
   });
 }
@@ -1914,9 +2059,11 @@ function renderChips(container, selId, cb) {
       const chip = document.createElement('button');
       chip.className = 'bd-chip' + (cat.id === selId ? ' sel' : '');
       chip.style.setProperty('--fill', cat.fill);
+      chip.style.setProperty('--btone', catTint(cat));
+      chip.style.setProperty('--btext', cat.textAqua);
       chip.textContent = shortChip(cat);
       const n = CATEGORIES.indexOf(cat) + 1;
-      chip.title = `Press ${n} to select`;
+      chip.title = `Option+${n} to select`;
       if (cat.id === selId) {
         chip.style.background = cat.fill;
         chip.style.borderColor = cat.fill;
@@ -1954,8 +2101,9 @@ function updateBdCount() {
   }
 }
 
-function bubbleSize(text) {
-  return Math.max(64, Math.min(100, 52 + text.length * 6));
+function bubbleSize(text, catId) {
+  const sz = catOf(catId).sz || 1;
+  return Math.round(Math.max(64, Math.min(100, 52 + text.length * 6)) * sz);
 }
 
 function effD(b) {
@@ -1967,6 +2115,8 @@ function applyBubbleSize(b) {
   b.dCur = d;
   b.el.style.width = `${d}px`;
   b.el.style.height = `${d}px`;
+  const bfs = b.slot != null ? 1 : Math.max(0.7, (catOf(b.catId).sz || 1) * floatScale);
+  b.el.style.setProperty('--bfs', bfs.toFixed(3));
 }
 
 function computeFloatScale() {
@@ -2009,12 +2159,14 @@ function styleBubble(b) {
   b.el.style.background = catTint(cat);
   b.el.style.borderColor = cat.fill;
   b.el.style.setProperty('--fill', cat.fill);
+  b.el.style.setProperty('--btone', catTint(cat));
+  b.el.style.setProperty('--btext', cat.textAqua);
   b.txtEl.textContent = b.text;
   b.ptsEl.textContent = cat.per5 ? '⏱️' : `+${fmt(cat.pts)}P`;
 }
 
 function catOf(id) {
-  return CATEGORIES.find(c => c.id === id) || { id: '?', emoji: '⭐', name: 'Task', pts: 0, per5: false, fill: '#CDA97C', tint: '#F2E8D8', tintNight: '#EFE4CC', text: '#FFFFFF' };
+  return CATEGORIES.find(c => c.id === id) || { id: '?', emoji: '⭐', name: 'Task', pts: 0, per5: false, fill: '#CDA97C', tint: '#F2E8D8', tintNight: '#EFE4CC', tintAqua: '#EAF6FF', text: '#FFFFFF', textAqua: '#0B3B6E', sz: 1 };
 }
 
 function buildBubbleEl(b) {
@@ -2077,7 +2229,7 @@ function addBubble(text, catId) {
     y: 0,
     vx: (Math.random() - 0.5) * 0.7,
     vy: (Math.random() - 0.5) * 0.55,
-    d: bubbleSize(text),
+    d: bubbleSize(text, catId),
     ph: Math.random() * 1000
   };
   const pos = spawnPos(b.d);
@@ -2090,6 +2242,7 @@ function addBubble(text, catId) {
   state.brain.push({ id: b.id, text: b.text, catId: b.catId, slot: null });
   saveState();
   updateBdCount();
+  return b;
 }
 
 function removeBubble(b, animated) {
@@ -2333,6 +2486,7 @@ function updateBubbles() {
 }
 
 bdInput.addEventListener('keydown', ev => {
+  if (ev.isComposing || ev.keyCode === 229) return;
   if (ev.key === 'Enter') {
     const text = bdInput.value.trim();
     if (!text) {
@@ -2343,9 +2497,9 @@ bdInput.addEventListener('keydown', ev => {
     bdInput.value = '';
     return;
   }
-  const n = parseInt(ev.key, 10);
-  if (n >= 1 && n <= 5) {
-    bdSelCat = CATEGORIES[n - 1].id;
+  const m = ev.altKey ? /^Digit([1-5])$/.exec(ev.code) : null;
+  if (m) {
+    bdSelCat = CATEGORIES[Number(m[1]) - 1].id;
     renderBdChips();
     ev.preventDefault();
   }
@@ -2380,8 +2534,9 @@ function confirmFocusBubble() {
     return;
   }
   closeFocusDialog();
-  popBurst(b.x, b.y);
-  floatPtsAt(b.x, b.y - b.d / 2 - 8, `+${fmt(Math.floor(mins / 5))}P`);
+  const pos = bubblePos(b);
+  popBurst(pos.x, pos.y);
+  floatPtsAt(pos.x, pos.y - effD(b) / 2 - 8, `+${fmt(Math.floor(mins / 5))}P`);
   addEarn(`${b.text} · Focus ${mins}min`, Math.floor(mins / 5), 0.5, { src: 'brain', bubbleText: b.text, bubbleCat: b.catId });
   removeBubble(b, true);
 }
@@ -2437,6 +2592,7 @@ document.getElementById('edit-save').addEventListener('click', () => {
   toast('Bubble updated ✨');
 });
 editText.addEventListener('keydown', ev => {
+  if (ev.isComposing || ev.keyCode === 229) return;
   if (ev.key === 'Enter') document.getElementById('edit-save').click();
 });
 
@@ -2451,7 +2607,7 @@ function loadBubbles() {
       y: 0,
       vx: (Math.random() - 0.5) * 0.7,
       vy: (Math.random() - 0.5) * 0.55,
-      d: bubbleSize(s.text),
+      d: bubbleSize(s.text, s.catId),
       ph: Math.random() * 1000,
       slot: (s.slot === 0 || s.slot === 1 || s.slot === 2) ? s.slot : null
     };
@@ -2488,6 +2644,7 @@ window.addEventListener('keydown', ev => {
   if (ev.key !== 'Escape') return;
   if (!editDialog.hidden) closeEditDialog();
   if (!focusDialog.hidden) closeFocusDialog();
+  closeIconPicker();
   closeMenu();
   closeDialog();
 });
